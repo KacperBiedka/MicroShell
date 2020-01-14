@@ -25,21 +25,25 @@
 #define VALUE_SEPARATOR_DELIMITER " \t\r\n\a"
 
 /* Declare commands */
+
 int sh_cd(char **args);
 int sh_exit(char **args);
+int sh_help(char **args);
 
 /* String values for the commands */
 
 char *default_str[] = {
   "cd",
-  "exit"
+  "exit",
+  "help"
 };
 
 /* Functions linked to the command string values */
 
 int (*default_func[]) (char **) = {
   &sh_cd,
-  &sh_exit
+  &sh_exit,
+  &sh_help
 };
 
 /* Print error and exit */
@@ -71,6 +75,21 @@ int sh_cd(char **args)
       perror("sh");
     }
   }
+  return 1;
+}
+
+/* Show list of available commands */
+
+int sh_help(char **args) {
+  int i;
+  printf("Kacper Biedka - microshell\n");
+  printf("Podaj komende i wcisnij enter\n");
+  printf("Dostepne komendy:\n");
+  /* Go through the list of commands and print them in the terminal */
+  for (i = 0; i < shell_number_values(); i++) {
+    printf(" - %s\n", default_str[i]);
+  }
+
   return 1;
 }
 
