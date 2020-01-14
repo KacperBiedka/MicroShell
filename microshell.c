@@ -47,6 +47,14 @@ void showError () {
     exit(EXIT_FAILURE);
 }
 
+/* shell number values()
+   return the number of the available commands
+*/
+int shell_number_values() {
+  return sizeof(default_str) / sizeof(char *);
+}
+
+
 int sh_start(char **args) {
   /* process id */
   pid_t pid;
@@ -83,8 +91,8 @@ int sh_execute(char **args)
     /* Return when the command is empty */
     return 1;
   }
-  /* shell_number_values */
-  for (i = 0; i < sizeof(default_str); i++) {
+  /* iterate through the commands array */
+  for (i = 0; i < shell_number_values(); i++) {
     /* Compare passed argument with defined functions and execute if true */
     if (strcmp(args[0], default_str[i]) == 0) {
       return (*default_func[i])(args);
