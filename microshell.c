@@ -1,3 +1,10 @@
+/* Kacper Biedka
+   UAM 
+   12.01.2020 
+   Microshell project
+   Documented thoroughly so that I have a clue what stuff does when I come back to it :D 
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,32 +20,27 @@
 
 /* Value Separator */
 #define VALUE_SEPARATOR_BUFFER_SIZE 64
+
 /* Delimeter for strtok */
 #define VALUE_SEPARATOR_DELIMITER " \t\r\n\a"
 
 /* Declare commands */
-
+int sh_cd(char **args);
 int sh_exit(char **args);
 
-/* String values for the commands - will be added with command implementation */
+/* String values for the commands */
 
 char *default_str[] = {
+  "cd",
   "exit"
 };
 
-/* Functions linked to the command string values - will be added with command implementation*/
+/* Functions linked to the command string values */
 
 int (*default_func[]) (char **) = {
+  &sh_cd,
   &sh_exit
 };
-
-/* Simple exit implementation */
-
-int sh_exit(char **args) {
-	char* user = getenv("USER");
-	printf("Na razie, %s :) ! \n\n",user);
-  return 0;
-}
 
 /* Print error and exit */
 
@@ -52,6 +54,32 @@ void showError () {
 */
 int shell_number_values() {
   return sizeof(default_str) / sizeof(char *);
+}
+
+/* ----------- CUSTOM COMMANDS ----------- */
+
+/* base command cd */
+
+int sh_cd(char **args)
+{	
+  /* handle empty input */
+  if (args[1] == NULL) {
+    fprintf(stderr, "sh: podaj argument dla \"cd\"\n");
+  } else {
+  	/* change the directory based on the argument */
+    if (chdir(args[1]) != 0) {
+      perror("sh");
+    }
+  }
+  return 1;
+}
+
+/* Simple exit implementation */
+
+int sh_exit(char **args) {
+	char* user = getenv("USER");
+	printf("Na razie, %s :) ! \n\n",user);
+  return 0;
 }
 
 
