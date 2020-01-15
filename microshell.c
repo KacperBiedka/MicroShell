@@ -279,6 +279,19 @@ char **separate_values(char *line) {
   return values;
 }
 
+/* Console display with custom colors */
+
+/* Based on https://repl.it/@samgomena/Colored-Output */
+
+/* Available Colors */
+
+#define COLOR_NORM "\x1B[0m"
+#define COLOR_CYAN "\x1B[36m"
+#define COLOR_WHITE "\x1B[37m"
+#define COLOR_GREEN "\x1B[32m"
+#define COLOR_YELLOW "\x1B[33m"
+
+
 /* REPL loop */
 void iterate(void) {
   /* Passed values */
@@ -292,7 +305,7 @@ void iterate(void) {
 	/* This will run if the passed argument matches any of the defined fuction names */
   do {
     /* Print the environment values follower by the $ sign */
-    printf("%s@%s:%s$ ",user_name,machine_name,path);
+    printf("%s%s@%s%s:%s%s%s$ ",COLOR_YELLOW,user_name,machine_name,COLOR_NORM,COLOR_CYAN,path,COLOR_WHITE);
     /* Handle passed character */
     currentLine = get_line_values();
     /* Separates passed string and assigns memory */
@@ -306,9 +319,10 @@ void iterate(void) {
   } while (state);
 }
 
+
 int main(int argc, char **argv) {
 
+  /* Run iterate function that will listen for inputs and compare them with declared function names (REPL loop) */
   iterate();
-
   return EXIT_SUCCESS;
 }
