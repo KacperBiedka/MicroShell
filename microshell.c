@@ -33,6 +33,7 @@ int sh_cd(char **args);
 int sh_exit(char **args);
 int sh_help(char **args);
 int sh_cat(char **args);
+int sh_mv(char **args);
 
 /* String values for the commands */
 
@@ -40,7 +41,8 @@ char *default_str[] = {
   "cd",
   "exit",
   "help",
-  "cat"
+  "cat",
+  "mv"
 };
 
 /* Functions linked to the command string values */
@@ -49,7 +51,8 @@ int (*default_func[]) (char **) = {
   &sh_cd,
   &sh_exit,
   &sh_help,
-  &sh_cat
+  &sh_cat,
+  &sh_mv
 };
 
 /* Print error and exit */
@@ -118,6 +121,25 @@ int sh_cat(char **args) {
       write(STDOUT_FILENO, &buffer, helper_num);
     }
     close(inner_desc);
+  }
+  return 1;
+}
+
+/* MV implementation */
+
+int sh_mv(char **args) {
+  /* Handle wrong/empty arguments */
+  if (args[1] == NULL || args[2] == NULL) {
+    fprintf(stderr, "sh: potrzebne 2 argumenty dla \"mv\"\n");
+  } else {
+    if (args[1] && args[2]) {
+      /* If renaming the file went wrong return an error */
+      if (rename(args[1], args[2]) == -1) {
+         fprintf(stderr, "sh: nie można przenieść %s do %s\n", args[1], args[2]);
+      }
+    } else {
+      fprintf(stderr,"SYNTAX ERROR: \n argumenty [stara_nazwa] [nowa_nazwa]");
+    }
   }
   return 1;
 }
