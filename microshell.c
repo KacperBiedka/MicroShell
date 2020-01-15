@@ -15,6 +15,9 @@
 
 /* Declare buffer sizes and other sys values */
 
+/* CAT */
+#define CAT_BUFFER_SIZE 1024
+
 /* READLINE */
 #define LINE_VALUES_BUFFER_SIZE 1024
 
@@ -29,13 +32,15 @@
 int sh_cd(char **args);
 int sh_exit(char **args);
 int sh_help(char **args);
+int sh_cat(char **args);
 
 /* String values for the commands */
 
 char *default_str[] = {
   "cd",
   "exit",
-  "help"
+  "help",
+  "cat"
 };
 
 /* Functions linked to the command string values */
@@ -43,7 +48,8 @@ char *default_str[] = {
 int (*default_func[]) (char **) = {
   &sh_cd,
   &sh_exit,
-  &sh_help
+  &sh_help,
+  &sh_cat
 };
 
 /* Print error and exit */
@@ -90,6 +96,29 @@ int sh_help(char **args) {
     printf(" - %s\n", default_str[i]);
   }
 
+  return 1;
+}
+
+/* CAT goes throught the file and writes out its content */
+int sh_cat(char **args) {
+
+  char buffer[CAT_BUFFER_SIZE];
+  int inner_desc;
+  int helper_num;
+  char* file = args[1];
+
+  /* Handle empty input */
+  if (args[1]==NULL) {
+    fprintf(stderr, "sh: potrzebny argument dla \"cat\"\n");
+  } else {
+    inner_desc=open(file,O_RDONLY);
+    /* Read file an print it to the terminal */
+    printf("[cat] %s zawiera: \n\n", file);
+    while ((helper_num = read(inner_desc, &buffer, CAT_BUFFER_SIZE)) > 0) {
+      write(STDOUT_FILENO, &buffer, helper_num);
+    }
+    close(inner_desc);
+  }
   return 1;
 }
 
