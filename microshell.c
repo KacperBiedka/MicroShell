@@ -55,10 +55,22 @@ int (*default_func[]) (char **) = {
   &sh_mv
 };
 
+
+/* Based on https://repl.it/@samgomena/Colored-Output */
+
+/* Available Colors */
+
+#define COLOR_NORM "\x1B[0m"
+#define COLOR_CYAN "\x1B[36m"
+#define COLOR_WHITE "\x1B[37m"
+#define COLOR_GREEN "\x1B[32m"
+#define COLOR_YELLOW "\x1B[33m"
+#define COLOR_RED "\x1b[31m"
+
 /* Print error and exit */
 
 void showError () {
-    fprintf(stderr, "sh: problem przy alokacji\n");
+    fprintf(stderr, "%ssh: problem przy alokacji\n", COLOR_RED);
     exit(EXIT_FAILURE);
 }
 
@@ -77,7 +89,7 @@ int sh_cd(char **args)
 {	
   /* handle empty input */
   if (args[1] == NULL) {
-    fprintf(stderr, "sh: podaj argument dla \"cd\"\n");
+    fprintf(stderr, "%ssh: podaj argument dla \"cd\"\n", COLOR_RED);
   } else {
   	/* change the directory based on the argument */
     if (chdir(args[1]) != 0) {
@@ -112,11 +124,11 @@ int sh_cat(char **args) {
 
   /* Handle empty input */
   if (args[1]==NULL) {
-    fprintf(stderr, "sh: potrzebny argument dla \"cat\"\n");
+    fprintf(stderr, "%ssh: potrzebny argument dla \"cat\"\n", COLOR_RED);
   } else {
     inner_desc=open(file,O_RDONLY);
     /* Read file an print it to the terminal */
-    printf("[cat] %s zawiera: \n\n", file);
+    printf("%s[cat] %s%s zawiera:%s \n\n", COLOR_YELLOW, COLOR_GREEN, file, COLOR_WHITE);
     while ((helper_num = read(inner_desc, &buffer, CAT_BUFFER_SIZE)) > 0) {
       write(STDOUT_FILENO, &buffer, helper_num);
     }
@@ -130,15 +142,17 @@ int sh_cat(char **args) {
 int sh_mv(char **args) {
   /* Handle wrong/empty arguments */
   if (args[1] == NULL || args[2] == NULL) {
-    fprintf(stderr, "sh: potrzebne 2 argumenty dla \"mv\"\n");
+    fprintf(stderr, "%ssh: potrzebne 2 argumenty dla \"mv\"\n", COLOR_RED);
   } else {
     if (args[1] && args[2]) {
       /* If renaming the file went wrong return an error */
       if (rename(args[1], args[2]) == -1) {
-         fprintf(stderr, "sh: nie można przenieść %s do %s\n", args[1], args[2]);
+         fprintf(stderr, "%ssh: nie można przenieść %s do %s\n", COLOR_RED, args[1], args[2]);
+      } else {
+      	printf("%s[mv] %sprzeniesiono %s do %s\n", COLOR_YELLOW, COLOR_GREEN, args[1], args[2]);
       }
     } else {
-      fprintf(stderr,"SYNTAX ERROR: \n argumenty [stara_nazwa] [nowa_nazwa]");
+      fprintf(stderr,"%sSYNTAX ERROR: \n argumenty [stara_nazwa] [nowa_nazwa]", COLOR_RED);
     }
   }
   return 1;
@@ -148,7 +162,7 @@ int sh_mv(char **args) {
 
 int sh_exit(char **args) {
 	char* user = getenv("USER");
-	printf("Na razie, %s :) ! \n\n",user);
+	printf("%sNa razie, %s%s%s :) ! \n\n", COLOR_GREEN, COLOR_YELLOW, user, COLOR_GREEN);
   return 0;
 }
 
@@ -280,17 +294,6 @@ char **separate_values(char *line) {
 }
 
 /* Console display with custom colors */
-
-/* Based on https://repl.it/@samgomena/Colored-Output */
-
-/* Available Colors */
-
-#define COLOR_NORM "\x1B[0m"
-#define COLOR_CYAN "\x1B[36m"
-#define COLOR_WHITE "\x1B[37m"
-#define COLOR_GREEN "\x1B[32m"
-#define COLOR_YELLOW "\x1B[33m"
-
 
 /* REPL loop */
 void iterate(void) {
