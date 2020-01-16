@@ -66,6 +66,7 @@ int (*default_func[]) (char **) = {
 #define COLOR_GREEN "\x1B[32m"
 #define COLOR_YELLOW "\x1B[33m"
 #define COLOR_RED "\x1b[31m"
+#define COLOR_BLUE "\x1b[34m"
 
 /* Print error and exit */
 
@@ -93,7 +94,7 @@ int sh_cd(char **args)
   } else {
   	/* change the directory based on the argument */
     if (chdir(args[1]) != 0) {
-      perror("sh");
+      perror(COLOR_RED "[sh microshell]");
     }
   }
   return 1;
@@ -103,9 +104,9 @@ int sh_cd(char **args)
 
 int sh_help(char **args) {
   int i;
-  printf("Kacper Biedka - microshell\n");
+  printf("%sKacper Biedka - microshell\n", COLOR_GREEN);
   printf("Podaj komende i wcisnij enter\n");
-  printf("Dostepne komendy:\n");
+  printf("%sDostepne komendy:\n", COLOR_BLUE);
   /* Go through the list of commands and print them in the terminal */
   for (i = 0; i < shell_number_values(); i++) {
     printf(" - %s\n", default_str[i]);
